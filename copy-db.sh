@@ -7,13 +7,14 @@ default() {
         echo "${1}"
     fi
 }
+
 prompt() {
     read -p "$1"" ("$2") [ENTER]: " value
     echo `default "$value" "$2"`
 }
 
 drop_create_db() {
-psql -U $2 $1 -c "
+    psql -U $2 $1 -c "
 drop schema public cascade;
 CREATE SCHEMA public AUTHORIZATION postgres;
 
