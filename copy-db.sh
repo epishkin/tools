@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 default() {
     if [ "${1}" = "" ] ; then
@@ -8,7 +8,7 @@ default() {
     fi
 }
 prompt() {
-    read -p "$1"" (default="$2") [ENTER]: " value
+    read -p "$1"" ("$2") [ENTER]: " value
     echo `default "$value" "$2"`
 }
 
@@ -30,28 +30,34 @@ REMOTE_USER=`default "$3" "$REMOTE_DB"`
 LOCAL_DB=`default "$4" "$REMOTE_DB"`
 LOCAL_USER=`default "$5" "sa"`
 
-echo -e "\n*** Remote DB ***"
+echo
+echo "*** Remote DB ***"
 REMOTE_SERVER=`prompt "remote host" "$REMOTE_SERVER"`
 REMOTE_DB=`prompt "remote DB name" "$REMOTE_DB"`
 REMOTE_USER=`prompt "remote DB username" "$REMOTE_USER"`
 
-echo -e "\n*** Local DB ***"
+echo
+echo "*** Local DB ***"
 LOCAL_DB=`prompt "local DB name" "$LOCAL_DB"`
-LOCAL_USER=`prompt "local DB username" "$LOCAL_USER"`
+LOCAL_USER=`prompt "local DB username, should be superuser" "$LOCAL_USER"`
 
 if [ ! -d "dumps" ]; then
     mkdir dumps
 fi
 DUMP_FILE=dumps/$REMOTE_DB.tar
 
-echo -e "\n1. Delete old dump file $DUMP_FILE"
+echo
+echo "1. Delete old dump file $DUMP_FILE"
 rm $DUMP_FILE
 
-echo -e "\n2. Dump remote DB $REMOTE_DB @ $REMOTE_SERVER into file $DUMP_FILE"
+echo
+echo "2. Dump remote DB $REMOTE_DB @ $REMOTE_SERVER into file $DUMP_FILE"
 pg_dump -f $DUMP_FILE --format=t $REMOTE_DB -h $REMOTE_SERVER -U $REMOTE_USER
 
-echo -e "\n3. Wipe local DB $LOCAL_DB"
+echo
+echo "3. Wipe local DB $LOCAL_DB"
 drop_create_db $LOCAL_DB $LOCAL_USER
 
-echo -e "\n4. Restore dump file $DUMP_FILE into local DB $LOCAL_DB"
+echo
+echo "4. Restore dump file $DUMP_FILE into local DB $LOCAL_DB"
 pg_restore -1 -e --no-owner --dbname=$LOCAL_DB -U $LOCAL_USER $DUMP_FILE
