@@ -9,7 +9,7 @@ default() {
 }
 
 prompt() {
-    read -p "$1"" ("$2") [ENTER]: " value
+    read -p "$1"": ["$2"] " value
     echo `default "$value" "$2"`
 }
 
@@ -33,14 +33,14 @@ LOCAL_USER=`default "$5" "sa"`
 
 echo
 echo "*** Remote DB ***"
-REMOTE_SERVER=`prompt "remote host" "$REMOTE_SERVER"`
-REMOTE_DB=`prompt "remote DB name" "$REMOTE_DB"`
-REMOTE_USER=`prompt "remote DB username" "$REMOTE_USER"`
+REMOTE_SERVER=`prompt "host" "$REMOTE_SERVER"`
+REMOTE_DB=`prompt "DB name" "$REMOTE_DB"`
+REMOTE_USER=`prompt "DB username" "$REMOTE_USER"`
 
 echo
 echo "*** Local DB ***"
-LOCAL_DB=`prompt "local DB name" "$LOCAL_DB"`
-LOCAL_USER=`prompt "local DB username, should be superuser" "$LOCAL_USER"`
+LOCAL_DB=`prompt "DB name" "$LOCAL_DB"`
+LOCAL_USER=`prompt "DB username, should be superuser" "$LOCAL_USER"`
 
 if [ ! -d "dumps" ]; then
     mkdir dumps
