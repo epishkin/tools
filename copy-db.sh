@@ -1,20 +1,31 @@
 #!/bin/sh
 
+DEFAULT_REMOTE_SERVER="cc1.dev.prv"
+DEFAULT_REMOTE_DB="plat_cc1"
+DEFAULT_LOCAL_DB="ops_dev"
+DEFAULT_LOCAL_USER="sa"
+
 default() {
-    if [ "${1}" = "" ] ; then
-        echo "$2"
-    else
-        echo "${1}"
-    fi
+  if [ "${1}" = "" ] ; then
+    echo "${2}"
+  else
+    echo "${1}"
+  fi
 }
 
-prompt() {
-    read -p "$1"": ["$2"] " value
-    echo `default "$value" "$2"`
+RETURN_VALUE=""
+readParam() {
+  if [ "${3}" = "" ] ; then
+    read -p "${1}"": ["${2}"] " value
+    RETURN_VALUE=`default "${value}" "${2}"`
+  else
+    echo "${1}: ${3}"
+    RETURN_VALUE="${3}"
+  fi
 }
 
 drop_create_db() {
-    psql -U $2 $1 -c "
+  psql -U $2 $1 -c "
 drop schema public cascade;
 CREATE SCHEMA public AUTHORIZATION postgres;
 
@@ -23,24 +34,29 @@ GRANT ALL ON SCHEMA public TO public;
 "
 }
 
+echo "Copy postgres DB from remote host into your local posgres"
 echo "Usage:  copy-db.sh [remote db host] [remote db name] [remote db user] [local db name] [local db user]"
-
-REMOTE_SERVER=`default "$1" "cc1.dev.prv"`
-REMOTE_DB=`default "$2" "plat_cc1"`
-REMOTE_USER=`default "$3" "$REMOTE_DB"`
-LOCAL_DB=`default "$4" "$REMOTE_DB"`
-LOCAL_USER=`default "$5" "sa"`
 
 echo
 echo "*** Remote DB ***"
-REMOTE_SERVER=`prompt "host" "$REMOTE_SERVER"`
-REMOTE_DB=`prompt "DB name" "$REMOTE_DB"`
-REMOTE_USER=`prompt "DB username" "$REMOTE_USER"`
+
+readParam "host" "${DEFAULT_REMOTE_SERVER}" "${1}"
+REMOTE_SERVER=${RETURN_VALUE}
+
+readParam "DB name" "${DEFAULT_REMOTE_DB}" "${2}"
+REMOTE_DB=${RETURN_VALUE}
+
+readParam "DB username" "$REMOTE_DB" "${3}"
+REMOTE_USER=${RETURN_VALUE}
 
 echo
 echo "*** Local DB ***"
-LOCAL_DB=`prompt "DB name" "$LOCAL_DB"`
-LOCAL_USER=`prompt "DB username, should be superuser" "$LOCAL_USER"`
+
+readParam "DB name" "${DEFAULT_LOCAL_DB}" "${4}"
+LOCAL_DB=${RETURN_VALUE}
+
+readParam "DB username, should be superuser" "${DEFAULT_LOCAL_USER}" "${5}"
+LOCAL_USER=${RETURN_VALUE}
 
 if [ ! -d "dumps" ]; then
     mkdir dumps
