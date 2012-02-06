@@ -1,0 +1,3 @@
+copy-db.sh - Copy postgres DB from remote host into your local posgres
+
+Usage:  copy-db.sh [remote db host] [remote db name] [remote db user] [local db name] [local db user]
