@@ -1,4 +1,8 @@
 #!/bin/sh
+# version 1.0
+
+echo "Copy postgres DB from remote host into your local posgres"
+echo "Usage:  copy-db.sh [remote db host] [remote db name] [remote db user] [local db name] [local db user]"
 
 DEFAULT_REMOTE_SERVER="cc1.dev.prv"
 DEFAULT_REMOTE_DB="plat_cc1"
@@ -33,9 +37,6 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO public;
 "
 }
-
-echo "Copy postgres DB from remote host into your local posgres"
-echo "Usage:  copy-db.sh [remote db host] [remote db name] [remote db user] [local db name] [local db user]"
 
 echo
 echo "*** Remote DB ***"
