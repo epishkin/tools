@@ -1,0 +1,27 @@
+remove_head() {
+  for BRANCH in $ALL_BRANCHES;
+  do
+    if [ "$BRANCH" = "->" ] || [ "$BRANCH" = "origin/HEAD" ]; then
+      continue
+    fi
+
+    echo $BRANCH
+  done | sort -u
+}
+
+ALL_BRANCHES=`git branch -r | sed s/^..//`
+BRANCHES=`remove_head $ALL_BRANCHES`
+
+printf "\n %-50s \t %-30s \t %s\n" "DATE" "BRANCH" "SHA & Commit message"
+
+for BRANCH in $BRANCHES;
+do
+  if [ "$BRANCH" = "->" ] || [ "$BRANCH" = "origin/HEAD" ]; then
+    continue
+  fi
+
+  BRANCH_DATE=`git log -1 --pretty=format:"%Cgreen%ci %Creset%cr%Creset" "$BRANCH"`
+  BRANCH_LAST_COMMIT=`git log -1 --pretty=format:"%h   [%an] %s%d" "$BRANCH" | cut -c 1-200`
+
+  printf "\n %-50s \t %-30s \t %s" "$BRANCH_DATE" "$BRANCH" "$BRANCH_LAST_COMMIT"
+done|sort
