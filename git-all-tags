@@ -1,0 +1,13 @@
+#!/bin/sh
+
+BRANCHES=`git tag | sort -u`
+
+printf "\n %-50s \t %-30s \t %s\n" "DATE" "BRANCH" "SHA & Commit message"
+
+for BRANCH in $BRANCHES;
+do
+  BRANCH_DATE=`git log -1 --pretty=format:"%Cgreen%ci %Creset%cr%Creset" "$BRANCH"`
+  BRANCH_LAST_COMMIT=`git log -1 --pretty=format:"%h   [%an] %s%d" "$BRANCH" | cut -c 1-200`
+
+  printf "\n %-50s \t %-30s \t %s" "$BRANCH_DATE" "$BRANCH" "$BRANCH_LAST_COMMIT"
+done|sort
