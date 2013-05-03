@@ -13,3 +13,7 @@ Usage:  copy-mongo-db.sh [remote db host] [remote db name] [local db name]
 ## git-branches
 Display all branches sorted by last change
 ![Picture](https://coderwall-assets-0.s3.amazonaws.com/uploads/picture/file/1586/git-hist.png)
+
+
+## git-tags
+Does the same as git-branches but for tags.
